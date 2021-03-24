@@ -1,0 +1,11 @@
+apiVersion: v1
+name: machine-simulator
+version: 0.0.1
+appVersion: 0.0.1
+description: A Helm chart for running the machine-simulator to create cncgrinders in orion on kubernetes.
+icon: https://fiware.github.io/catalogue/img/fiware.png
+keywords:
+  - fiware
+maintainers:
+  - name: wistefan
+    email: stefan.wiedemann@fiware.org

@@ -1,0 +1,50 @@
+micronaut:
+  application:
+    name:  ${project.artifactId}
+#  server:
+#    port: 9090
+
+  http:
+    services:
+      orion:
+        path: ngsi-ld/v1
+        url: http://localhost:1026
+
+  metrics:
+    enabled: true
+    export:
+      prometheus:
+        step: PT2s
+        descriptions: false
+
+jackson:
+  serializationInclusion: NON_EMPTY
+  serialization:
+    indentOutput: true
+    writeDatesAsTimestamps: false
+
+endpoints:
+  metrics:
+    enabled: true
+  health:
+    enabled: true
+
+simulator:
+  companies:
+    - name: company-1
+      grinders:
+        - name: grinder-c1-1
+        - name: grinder-c1-2
+        - name: grinder-c1-3
+        - name: grinder-c1-4
+        - name: grinder-c1-5
+    - name: company-2
+      grinders:
+        - name: grinder-c2-1
+        - name: grinder-c2-2
+        - name: grinder-c2-3
+    - name: company-3
+      grinders:
+        - name: grinder-c3-1
+        - name: grinder-c3-2
+        - name: grinder-c3-3

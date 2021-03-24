@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "machine-simulator.fullname" . }}
+  labels:
+    {{ include "machine-simulator.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.deployment.replicaCount }}
+  revisionHistoryLimit: {{ .Values.deployment.revisionHistoryLimit }}
+  strategy:
+  {{- with .Values.deployment.updateStrategy }}
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "machine-simulator.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        {{ include "machine-simulator.labels" . | nindent 8 }}
+        {{- with .Values.deployment.additionalLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- if .Values.deployment.additionalAnnotations -}}
+      annotations:
+        {{- with .Values.deployment.additionalAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- end }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          imagePullPolicy: {{ .Values.deployment.image.pullPolicy }}
+          image: "{{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag }}"
+          env:
+            - name: MICRONAUT_CONFIG_FILES
+              value: /fiware/config/application-k8s.yaml
+          ports:
+            - name: http
+              containerPort: {{ .Values.port}}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: {{ .Values.deployment.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.deployment.livenessProbe.periodSeconds }}
+            successThreshold: {{ .Values.deployment.livenessProbe.successThreshold }}
+            timeoutSeconds: {{ .Values.deployment.livenessProbe.timeoutSeconds }}
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: {{ .Values.deployment.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.deployment.readinessProbe.periodSeconds }}
+            successThreshold: {{ .Values.deployment.readinessProbe.successThreshold }}
+            timeoutSeconds: {{ .Values.deployment.readinessProbe.timeoutSeconds }}
+          resources:
+            {{- toYaml .Values.deployment.resources | nindent 12 }}
+          volumeMounts:
+            - name: service-config
+              mountPath: /fiware/config
+      {{- with .Values.deployment.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.deployment.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.deployment.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: service-config
+          configMap:
+            name: {{ include "machine-simulator.fullname" . }}

@@ -1,0 +1,11 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ include "machine-simulator.fullname" . }}
+  labels:
+    {{ include "machine-simulator.labels" . | nindent 4 }}
+data:
+{{- range $key, $val := .Values.config }}
+  {{ $key }}: |-
+{{ toYaml $val | indent 4 }}
+{{- end }}

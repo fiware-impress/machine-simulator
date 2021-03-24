@@ -1,0 +1,102 @@
+# -- option to override the name config in the _helpers.tpl
+nameOverride: ""
+# -- option to override the fullname config in the _helpers.tpl
+fullnameOverride: ""
+
+## configuration for the k8s service to access keyrock
+service:
+  # -- service type
+  type: ClusterIP
+  # -- port to be used by the service
+  port: 9090
+  # -- addtional annotations, if required
+  annotations: {}
+
+## deployment specific configuration
+deployment:
+  # -- initial number of target replications, can be different if autoscaling is enabled
+  replicaCount: 1
+  # -- number of old replicas to be retained
+  revisionHistoryLimit: 3
+  ## configuration of the keyrock update strategy
+  updateStrategy:
+    # -- type of the update
+    type: RollingUpdate
+    # -- new pods will be added gradually
+    rollingUpdate:
+      # -- number of pods that can be created above the desired amount while updating
+      maxSurge: 1
+      # -- number of pods that can be unavailable while updating
+      maxUnavailable: 0
+  ## configuration of the image to be used
+  image:
+    # -- keyrock image name
+    # ref: https://hub.docker.com/r/fiware/idm
+    repository: wistefan/machine-simulator
+    # -- tag of the image to be used
+    tag: latest
+    # -- specification of the image pull policy
+    pullPolicy: Always
+  # -- additional labels for the deployment, if required
+  additionalLabels: {}
+  # -- additional annotations for the deployment, if required
+  additionalAnnotations: {}
+  livenessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 30
+  readinessProbe:
+    initialDelaySeconds: 31
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 30
+
+port: 9090
+
+config:
+  application-k8s.yaml:
+    micronaut:
+      application:
+        name: machine-simulator
+      server:
+        port: 9090
+
+      http:
+        services:
+          orion:
+            path: ngsi-ld/v1
+            url: http://orion:1026
+
+      metrics:
+        enabled: true
+        export:
+          prometheus:
+            step: PT2s
+            descriptions: false
+
+    endpoints:
+      metrics:
+        enabled: true
+      health:
+        enabled: true
+
+    simulator:
+      companies:
+        - name: company-1
+          grinders:
+            - name: grinder-c1-1
+            - name: grinder-c1-2
+            - name: grinder-c1-3
+            - name: grinder-c1-4
+            - name: grinder-c1-5
+        - name: company-2
+          grinders:
+            - name: grinder-c2-1
+            - name: grinder-c2-2
+            - name: grinder-c2-3
+        - name: company-3
+          grinders:
+            - name: grinder-c3-1
+            - name: grinder-c3-2
+            - name: grinder-c3-3
