@@ -8,5 +8,5 @@ import java.util.List;
 public class CompanyConfig {
 
 	public String name;
-	public List<GrinderConfig> grinders;
+	public List<CraneConfig> cranes;
 }

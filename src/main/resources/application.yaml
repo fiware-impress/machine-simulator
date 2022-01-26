@@ -32,19 +32,19 @@ endpoints:
 simulator:
   companies:
     - name: company-1
-      grinders:
-        - name: grinder-c1-1
-        - name: grinder-c1-2
-        - name: grinder-c1-3
-        - name: grinder-c1-4
-        - name: grinder-c1-5
+      cranes:
+        - name: crane-c1-1
+        - name: crane-c1-2
+        - name: crane-c1-3
+        - name: crane-c1-4
+        - name: crane-c1-5
     - name: company-2
-      grinders:
-        - name: grinder-c2-1
-        - name: grinder-c2-2
-        - name: grinder-c2-3
+      cranes:
+        - name: crane-c2-1
+        - name: crane-c2-2
+        - name: crane-c2-3
     - name: company-3
-      grinders:
-        - name: grinder-c3-1
-        - name: grinder-c3-2
-        - name: grinder-c3-3
+      cranes:
+        - name: crane-c3-1
+        - name: crane-c3-2
+        - name: crane-c3-3
