@@ -18,6 +18,7 @@ import java.net.URI;
 import java.net.URL;
 import java.time.Clock;
 import java.time.Instant;
+import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ScheduledExecutorService;
@@ -51,6 +52,7 @@ public abstract class AbstractDevice {
 	protected abstract void runStep();
 
 	protected abstract int getStartOffset();
+
 	protected abstract int getUpdateFrequency();
 
 	protected abstract TimeUnit getUpdateUnit();
@@ -76,11 +78,11 @@ public abstract class AbstractDevice {
 		EntityVO entityVO = getNgsiEntity();
 		if (!isCreated) {
 			isCreated = true;
-			executeRequest(() -> entitiesApiClient.createEntity(entityVO), "Was not able to create entity. Might already exist.");
+			executeRequest(() -> entitiesApiClient.createEntity(entityVO, null), "Was not able to create entity. Might already exist.");
 			return;
 		}
 		executeRequest(
-				() -> entitiesApiClient.updateEntityAttrs(id, entityToEntityFragment(entityVO)), "Was not able to update the entity.");
+				() -> entitiesApiClient.updateEntityAttrs(id, entityToEntityFragment(entityVO), null), "Was not able to update the entity.");
 	}
 
 	private void executeRequest(Runnable r, String msg) {
@@ -99,7 +101,8 @@ public abstract class AbstractDevice {
 		return entityFragmentVO
 				.atContext(entityVO.atContext())
 				.location(entityVO.getLocation())
-				.type(entityVO.getType());
+				.operationSpace(null)
+				.observationSpace(null);
 	}
 
 	protected Integer getRandom(int min, int max) {
@@ -109,12 +112,12 @@ public abstract class AbstractDevice {
 				.getAsInt();
 	}
 
-	protected Double getRandomD(Double min, Double max){
+	protected Double getRandomD(Double min, Double max) {
 		Random random = new Random();
 		return random.doubles(min, max).findFirst().getAsDouble();
 	}
 
-	protected PropertyVO asProperty(Object value, Instant observedAt) {
+	protected PropertyVO asProperty(Object value, Date observedAt) {
 		return new PropertyVO().observedAt(observedAt).value(value).type(PropertyVO.Type.PROPERTY);
 	}
 }

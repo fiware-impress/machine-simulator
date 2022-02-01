@@ -8,11 +8,15 @@ import org.fiware.ngsi.model.GeoPropertyVO;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import static java.time.ZoneOffset.UTC;
 
 @ToString
 public class LiftingCompany extends AbstractDevice {
@@ -35,9 +39,9 @@ public class LiftingCompany extends AbstractDevice {
 
 	@Override
 	protected EntityVO getNgsiEntity() {
-		Instant observedAt = getClock().instant();
+		Date observedAt = Date.from(getClock().instant());
 		GeoPropertyVO location = new GeoPropertyVO().observedAt(observedAt).type(GeoPropertyVO.Type.GEOPROPERTY).value(getLocation());
-		EntityVO ngsiEntity = new EntityVO().atContext(CONTEXT_URL).id(getId()).location(location).type("company");
+		EntityVO ngsiEntity = new EntityVO().atContext(CONTEXT_URL).id(getId()).location(location).type("company").operationSpace(null).observationSpace(null);
 		ngsiEntity.setAdditionalProperties(Map.of("name", asProperty(name, observedAt)));
 		return ngsiEntity;
 	}
