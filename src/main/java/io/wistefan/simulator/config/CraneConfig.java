@@ -3,7 +3,7 @@ package io.wistefan.simulator.config;
 import lombok.Data;
 
 @Data
-public class GrinderConfig {
+public class CraneConfig {
 
 	private String name;
 }

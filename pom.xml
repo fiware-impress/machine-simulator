@@ -22,7 +22,7 @@
         <!-- lazy dev -->
         <version.ch.qos.logback>1.2.3</version.ch.qos.logback>
         <version.org.openapitools.generator-maven-plugin>5.0.0</version.org.openapitools.generator-maven-plugin>
-        <version.org.projectlombok>1.18.16</version.org.projectlombok>
+        <version.org.projectlombok>1.18.22</version.org.projectlombok>
         <version.io.kokuwa.micronaut.codegen>2.0.1</version.io.kokuwa.micronaut.codegen>
 
     </properties>
@@ -332,4 +332,3 @@
         </plugins>
     </build>
 </project>
-

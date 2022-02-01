@@ -109,6 +109,11 @@ public abstract class AbstractDevice {
 				.getAsInt();
 	}
 
+	protected Double getRandomD(Double min, Double max){
+		Random random = new Random();
+		return random.doubles(min, max).findFirst().getAsDouble();
+	}
+
 	protected PropertyVO asProperty(Object value, Instant observedAt) {
 		return new PropertyVO().observedAt(observedAt).value(value).type(PropertyVO.Type.PROPERTY);
 	}

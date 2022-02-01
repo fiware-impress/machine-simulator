@@ -15,12 +15,12 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @ToString
-public class GrindingCompany extends AbstractDevice {
+public class LiftingCompany extends AbstractDevice {
 
 	private final String name;
 	private List<URI> grinders = new ArrayList<>();
 
-	public GrindingCompany(URI id, ScheduledExecutorService scheduledExecutorService, EntitiesApiClient entitiesApiClient, Clock clock, String name) {
+	public LiftingCompany(URI id, ScheduledExecutorService scheduledExecutorService, EntitiesApiClient entitiesApiClient, Clock clock, String name) {
 		super(id, scheduledExecutorService, entitiesApiClient, clock);
 		this.name = name;
 	}
