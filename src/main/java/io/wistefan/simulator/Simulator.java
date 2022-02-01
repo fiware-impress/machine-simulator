@@ -1,10 +1,13 @@
 package io.wistefan.simulator;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.context.annotation.Context;
 import io.wistefan.simulator.config.SimulatorConfiguration;
 import io.wistefan.simulator.model.Crane;
 import io.wistefan.simulator.model.LiftingCompany;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.fiware.ngsi.api.EntitiesApiClient;
 
 import javax.annotation.PostConstruct;
@@ -12,6 +15,7 @@ import java.net.URI;
 import java.time.Clock;
 import java.util.concurrent.ScheduledExecutorService;
 
+@Slf4j
 @Context
 @RequiredArgsConstructor
 public class Simulator {
@@ -22,9 +26,16 @@ public class Simulator {
 	private final Clock clock;
 	private final SimulatorConfiguration simulatorConfiguration;
 
+	private final ObjectMapper objectMapper;
+
 	@PostConstruct
 	public void simulate() {
 
+		try {
+			log.info(objectMapper.writeValueAsString(clock.instant()));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 		simulatorConfiguration.getCompanies().stream().forEach(company -> {
 			URI companyID = URI.create(String.format(ID_TEMPLATE, "company", company.getName()));
 			LiftingCompany companySimulator = new LiftingCompany(

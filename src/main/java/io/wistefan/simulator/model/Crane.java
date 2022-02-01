@@ -11,6 +11,7 @@ import org.fiware.ngsi.model.RelationshipVO;
 import java.net.URI;
 import java.time.Clock;
 import java.time.Instant;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.AbstractMap;
@@ -70,7 +71,7 @@ public class Crane extends AbstractDevice {
 	protected void runStep() {
 		if (currentLength == 0 || currentLength.equals(currentStepNr)) {
 			// generate length of next on/off period.
-			currentLength = getRandom(10,20);
+			currentLength = getRandom(10, 20);
 			// reset step to 0
 			currentStepNr = 0;
 			active = !active;
@@ -83,9 +84,9 @@ public class Crane extends AbstractDevice {
 
 	@Override
 	protected EntityVO getNgsiEntity() {
-		Instant observedAt = getClock().instant();
+		Date observedAt = Date.from(getClock().instant());
 		GeoPropertyVO location = new GeoPropertyVO().observedAt(observedAt).type(GeoPropertyVO.Type.GEOPROPERTY).value(getLocation());
-		EntityVO ngsiEntity = new EntityVO().atContext(CONTEXT_URL).id(getId()).location(location).type("crane");
+		EntityVO ngsiEntity = new EntityVO().atContext(CONTEXT_URL).id(getId()).location(location).type("crane").observationSpace(null).operationSpace(null);
 		Map<String, Object> additionalProperties = new HashMap<>();
 
 		additionalProperties.put("softwareVersion", asProperty(softwareVersion, observedAt));
@@ -94,7 +95,7 @@ public class Crane extends AbstractDevice {
 		additionalProperties.put("maxLiftingWeight", asProperty(maxLiftingWeight, observedAt));
 		additionalProperties.put("currentHookHeight", asProperty(currentHookHeight, observedAt));
 
-		if(currentCompany != null) {
+		if (currentCompany != null) {
 			RelationshipVO companyRelationshipVO = new RelationshipVO().observedAt(observedAt).type(RelationshipVO.Type.RELATIONSHIP)._object(currentCompany);
 			additionalProperties.put("currentCompany", companyRelationshipVO);
 		}
@@ -114,30 +115,30 @@ public class Crane extends AbstractDevice {
 		PropertyVO elMotorI2VO = asProperty(elMotor.getI2(), observedAt);
 		PropertyVO elMotorI3VO = asProperty(elMotor.getI3(), observedAt);
 		PropertyVO elMotorVRmsVO = asProperty(elMotor.getVrms(), observedAt);
-		
+
 		PropertyVO elMotorMaxVoltageVO = asProperty(elMotor.getMaxVoltage(), observedAt);
 		PropertyVO elMotorMaxCurrentVO = asProperty(elMotor.getMaxCurrent(), observedAt);
 		PropertyVO elMotorMaxRPMVO = asProperty(elMotor.getMaxRpm(), observedAt);
 		PropertyVO elMotorMaxVrmsVO = asProperty(elMotor.getMaxVrms(), observedAt);
 
 		PropertyVO elMotorVO = new PropertyVO().value("electricmotor").observedAt(observedAt).type(PropertyVO.Type.PROPERTY);
- 		elMotorVO.setAdditionalProperties(
-			Map.ofEntries(
-				Map.entry("active",elMotorActiveVO),
-				Map.entry("rpm",elMotorRpmVO),
-				Map.entry("u1",elMotorU1VO),
-				Map.entry("u2",elMotorU2VO),
-				Map.entry("u3",elMotorU3VO),
-				Map.entry("i1",elMotorI1VO),
-				Map.entry("i2",elMotorI2VO),
-				Map.entry("i3",elMotorI3VO),
-				Map.entry("vrms",elMotorVRmsVO),
-				Map.entry("rpmmax",elMotorMaxRPMVO),
- 				Map.entry("umax",elMotorMaxVoltageVO),
-				Map.entry("imax",elMotorMaxCurrentVO),
-				Map.entry("vrmsmax",elMotorMaxVrmsVO) 
-			)
-		); 
+		elMotorVO.setAdditionalProperties(
+				Map.ofEntries(
+						Map.entry("active", elMotorActiveVO),
+						Map.entry("rpm", elMotorRpmVO),
+						Map.entry("u1", elMotorU1VO),
+						Map.entry("u2", elMotorU2VO),
+						Map.entry("u3", elMotorU3VO),
+						Map.entry("i1", elMotorI1VO),
+						Map.entry("i2", elMotorI2VO),
+						Map.entry("i3", elMotorI3VO),
+						Map.entry("vrms", elMotorVRmsVO),
+						Map.entry("rpmmax", elMotorMaxRPMVO),
+						Map.entry("umax", elMotorMaxVoltageVO),
+						Map.entry("imax", elMotorMaxCurrentVO),
+						Map.entry("vrmsmax", elMotorMaxVrmsVO)
+				)
+		);
 		additionalProperties.put("electricmotor", elMotorVO);
 		ngsiEntity.setAdditionalProperties(additionalProperties);
 		return ngsiEntity;
@@ -148,7 +149,7 @@ public class Crane extends AbstractDevice {
 			// Calculate delta_h:
 			Double tmpHookspeed = getRandomD(0.1, getMaxHookspeedByWeight(lifting.getWeight()));
 			currentHookHeight += tmpHookspeed;
-			if(currentHookHeight >= 60.0){
+			if (currentHookHeight >= 60.0) {
 				// Hook in max. altitude
 				tmpHookspeed = 0.0;
 				currentHookHeight = 60.0;
@@ -160,18 +161,17 @@ public class Crane extends AbstractDevice {
 				elMotor.setI3(0.0);
 				elMotor.setRpm(0.0);
 				elMotor.setVrms(0.0);
-			}
-			else{
+			} else {
 				//Hook moving:
 				Double tmpCurrent = getCurrentByHookspeed(tmpHookspeed, lifting.getWeight(), elMotor.getMaxCurrent());
 				Double tmpVoltage = getVoltageByCurrent(tmpCurrent);
 				Double tmpRpm = getRPMByHookspeed(tmpHookspeed);
 				Double tmpVrms = getVrmsByHookspeed(tmpHookspeed, malfunction);
-				
+
 				// To make the data be more natural there will be some small distortions in the readings:
 				Double distortionMin = -0.1;
 				Double distortionMax = 0.1;
-	
+
 				elMotor.setU1(tmpVoltage + getRandomD(distortionMin, distortionMax));
 				elMotor.setU2(tmpVoltage + getRandomD(distortionMin, distortionMax));
 				elMotor.setU3(tmpVoltage + getRandomD(distortionMin, distortionMax));
@@ -184,49 +184,48 @@ public class Crane extends AbstractDevice {
 		}
 	}
 
-	private Double getRPMByHookspeed(Double s){
+	private Double getRPMByHookspeed(Double s) {
 		//Hook speed m/s
-		return(s * 750.0);
+		return (s * 750.0);
 	}
 
-	private Double getVrmsByHookspeed(Double s, Boolean malfunction){
+	private Double getVrmsByHookspeed(Double s, Boolean malfunction) {
 		//Between 0 and 1 thus s is maximal 2
 		Double tmpVrms = s / 2.5;
-		if(malfunction){
-			if(tmpVrms > 0.89){
+		if (malfunction) {
+			if (tmpVrms > 0.89) {
 				tmpVrms = 0.99;
-			}
-			else{
+			} else {
 				Double res = 2.0;
-				while(res > 1.0){
+				while (res > 1.0) {
 					Double tmp = getRandomD(0.1, 0.2);
 					res = tmpVrms + tmp;
 				}
 				tmpVrms = res;
 			}
 		}
-		return(tmpVrms);
+		return (tmpVrms);
 	}
 
-	private Double getCurrentByHookspeed(Double s, Double w, Double m){
+	private Double getCurrentByHookspeed(Double s, Double w, Double m) {
 		// s = hookspeed, w = weight, m = maxCurrent
 		Double maxHookS = getMaxHookspeedByWeight(w);
 		Double percent = s / maxHookS;
-		return(m * percent);
+		return (m * percent);
 	}
 
-	private Double getVoltageByCurrent(Double c){
+	private Double getVoltageByCurrent(Double c) {
 		// 0 Amps -> 230V
 		// 52 Amps -> 225V
-		return(-0.09615*c + 230.0);
+		return (-0.09615 * c + 230.0);
 	}
 
-	private Double getMaxHookspeedByWeight(Double w){
+	private Double getMaxHookspeedByWeight(Double w) {
 		// 2000kg -> 2m/s
 		// 8000kg -> 0.75m/s
 		// In between linear.
 		// Linear Regression yields:
-		return(-0.0002083*w + 2.417);
+		return (-0.0002083 * w + 2.417);
 	}
 
 	private void startStep() {
@@ -245,7 +244,7 @@ public class Crane extends AbstractDevice {
 		} else {
 			//Chance of a malfunction -> higher v_rms. Can be adjusted here:
 			Double chance = getRandomD(0.0, 1.0);
-			if(chance > 0.8){
+			if (chance > 0.8) {
 				malfunction = true;
 			}
 			currentHookHeight = 0.0;
