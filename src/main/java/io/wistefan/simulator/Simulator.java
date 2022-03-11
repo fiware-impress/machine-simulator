@@ -13,6 +13,7 @@ import org.fiware.ngsi.api.EntitiesApiClient;
 import javax.annotation.PostConstruct;
 import java.net.URI;
 import java.time.Clock;
+import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 
 @Slf4j
@@ -48,8 +49,11 @@ public class Simulator {
 						URI.create(String.format(ID_TEMPLATE, "crane", c.getName())),
 						scheduledExecutorService,
 						entitiesApiClient,
-						clock);
-				crane.setCurrentCompany(companyID);
+						clock,
+						Optional.ofNullable(c.getLatitude()),
+						Optional.ofNullable(c.getLongitude()),
+						c.getMaxHookHeight(),c.getMaxLiftingWeight(), c.getPayloadAtTip(), c.getModel());
+				crane.setCurrentCustomer(companyID);
 				crane.startSimulation();
 			});
 			companySimulator.startSimulation();

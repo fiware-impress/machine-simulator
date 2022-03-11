@@ -45,7 +45,6 @@ public abstract class AbstractDevice {
 	private final EntitiesApiClient entitiesApiClient;
 	private final Clock clock;
 	private boolean isCreated = false;
-	private PointVO location;
 
 	protected abstract EntityVO getNgsiEntity();
 
@@ -58,16 +57,20 @@ public abstract class AbstractDevice {
 	protected abstract TimeUnit getUpdateUnit();
 
 	public void startSimulation() {
-		double lati = 0.01 * getRandom(0, 100);
-		double longi = 0.01 * getRandom(0, 100);
-		location = new PointVO();
-		location.type(PointVO.Type.POINT);
-		location.coordinates().add(52 + lati);
-		location.coordinates().add(13 + longi);
+
 
 		scheduledExecutorService.scheduleAtFixedRate(() -> runSimulationStep(), getStartOffset(), getUpdateFrequency(), getUpdateUnit());
 	}
 
+	protected PointVO getLocation() {
+		double lati = 0.01 * getRandom(0, 100);
+		double longi = 0.01 * getRandom(0, 100);
+		PointVO location = new PointVO();
+		location.type(PointVO.Type.POINT);
+		location.coordinates().add(52 + lati);
+		location.coordinates().add(13 + longi);
+		return location;
+	}
 
 	private void runSimulationStep() {
 		runStep();
@@ -88,6 +91,7 @@ public abstract class AbstractDevice {
 	private void executeRequest(Runnable r, String msg) {
 		try {
 			r.run();
+			log.info("Updated {}", this.id);
 		} catch (HttpClientResponseException e) {
 			log.warn("{} {}: {}", msg, e.getStatus(), e.getMessage());
 		} catch (ReadTimeoutException timeoutException) {

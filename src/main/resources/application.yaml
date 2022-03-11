@@ -36,6 +36,11 @@ simulator:
     - name: company-1
       cranes:
         - name: crane-c1-1
+          model: "Euro SSG 130"
+        - name: crane-c2-1
+          model: "Euro SSG 130"
+          latitude: 51.14
+          longitude: 13.7
 #        - name: crane-c1-2
 #        - name: crane-c1-3
 #        - name: crane-c1-4

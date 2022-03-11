@@ -5,16 +5,16 @@ import lombok.ToString;
 import org.fiware.ngsi.api.EntitiesApiClient;
 import org.fiware.ngsi.model.EntityVO;
 import org.fiware.ngsi.model.GeoPropertyVO;
+import org.fiware.ngsi.model.PointVO;
 import org.fiware.ngsi.model.PropertyVO;
 import org.fiware.ngsi.model.RelationshipVO;
 
 import java.net.URI;
 import java.time.Clock;
-import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.AbstractMap;
+import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -34,22 +34,36 @@ public class Crane extends AbstractDevice {
 	private Integer currentStepNr = 0;
 	private Integer currentLength = 0;
 
-	private String softwareVersion = "0.0.1";
-	private Boolean active = false;
-	private Double currentHookHeight = 0.0;
-	private Boolean malfunction = false;
+	private final String softwareVersion = "0.0.1";
+	private boolean active = false;
+	private double currentHookHeight = 0.0;
+	private boolean malfunction = false;
 
-	private Double maxHookHeight = 60.0;
-	private Double maxLiftingWeight = 8000.0;
+	private final double maxHookHeight;
+	private final double maxLiftingWeight;
+	// compatibility
+	private final double maxPayload;
+	private final double payloadAtTip;
+	private final String model;
+
+	private double lat = 51.24752;
+	private double longi = 13.87789;
 
 	@Setter
-	private URI currentCompany;
+	private URI currentCustomer;
 	private Lifting lifting;
 	private ElectricMotor elMotor = new ElectricMotor(1500.0, 240.0, 52.0, 1.0);
 
 
-	public Crane(URI id, ScheduledExecutorService scheduledExecutorService, EntitiesApiClient entitiesApiClient, Clock clock) {
+	public Crane(URI id, ScheduledExecutorService scheduledExecutorService, EntitiesApiClient entitiesApiClient, Clock clock, Optional<Double> optionalLat, Optional<Double> optionalLongi, double maxHookHeight, double maxLiftingWeight, double payloadAtTip, String model) {
 		super(id, scheduledExecutorService, entitiesApiClient, clock);
+		this.maxHookHeight = maxHookHeight;
+		this.maxLiftingWeight = maxLiftingWeight;
+		this.maxPayload = maxLiftingWeight;
+		this.payloadAtTip = payloadAtTip;
+		this.model = model;
+		optionalLat.ifPresent(olv -> lat = olv);
+		optionalLongi.ifPresent(olv -> longi = olv);
 	}
 
 	@Override
@@ -83,6 +97,15 @@ public class Crane extends AbstractDevice {
 	}
 
 	@Override
+	protected PointVO getLocation() {
+		PointVO pointVO = new PointVO();
+		pointVO.type(PointVO.Type.POINT);
+		pointVO.coordinates().add(lat);
+		pointVO.coordinates().add(longi);
+		return pointVO;
+	}
+
+	@Override
 	protected EntityVO getNgsiEntity() {
 		Date observedAt = Date.from(getClock().instant());
 		GeoPropertyVO location = new GeoPropertyVO().observedAt(observedAt).type(GeoPropertyVO.Type.GEOPROPERTY).value(getLocation());
@@ -93,11 +116,14 @@ public class Crane extends AbstractDevice {
 		additionalProperties.put("active", asProperty(active, observedAt));
 		additionalProperties.put("maxHookHeight", asProperty(maxHookHeight, observedAt));
 		additionalProperties.put("maxLiftingWeight", asProperty(maxLiftingWeight, observedAt));
+		additionalProperties.put("maxPayLoad", asProperty(maxPayload, observedAt));
 		additionalProperties.put("currentHookHeight", asProperty(currentHookHeight, observedAt));
+		additionalProperties.put("model", asProperty(model, observedAt));
 
-		if (currentCompany != null) {
-			RelationshipVO companyRelationshipVO = new RelationshipVO().observedAt(observedAt).type(RelationshipVO.Type.RELATIONSHIP)._object(currentCompany);
-			additionalProperties.put("currentCompany", companyRelationshipVO);
+
+		if (currentCustomer != null) {
+			RelationshipVO companyRelationshipVO = new RelationshipVO().observedAt(observedAt).type(RelationshipVO.Type.RELATIONSHIP)._object(currentCustomer);
+			additionalProperties.put("currentCustomer", companyRelationshipVO);
 		}
 		if (lifting != null) {
 			PropertyVO liftingWeightVO = asProperty(lifting.getWeight(), observedAt);
