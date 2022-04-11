@@ -1,5 +1,6 @@
 package io.wistefan.simulator.model;
 
+import io.wistefan.simulator.config.GeneralConfig;
 import lombok.ToString;
 import org.fiware.ngsi.api.EntitiesApiClient;
 import org.fiware.ngsi.model.EntityVO;
@@ -24,8 +25,8 @@ public class LiftingCompany extends AbstractDevice {
 	private final String name;
 	private List<URI> grinders = new ArrayList<>();
 
-	public LiftingCompany(URI id, ScheduledExecutorService scheduledExecutorService, EntitiesApiClient entitiesApiClient, Clock clock, String name) {
-		super(id, scheduledExecutorService, entitiesApiClient, clock);
+	public LiftingCompany(URI id, ScheduledExecutorService scheduledExecutorService, EntitiesApiClient entitiesApiClient, Clock clock, GeneralConfig generalConfig, String name) {
+		super(id, scheduledExecutorService, entitiesApiClient, clock, generalConfig);
 		this.name = name;
 	}
 

@@ -3,6 +3,7 @@ package io.wistefan.simulator.model;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
 import io.micronaut.http.client.exceptions.ReadTimeoutException;
+import io.wistefan.simulator.config.GeneralConfig;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -44,6 +45,7 @@ public abstract class AbstractDevice {
 	private final ScheduledExecutorService scheduledExecutorService;
 	private final EntitiesApiClient entitiesApiClient;
 	private final Clock clock;
+	private final GeneralConfig generalConfig;
 	private boolean isCreated = false;
 
 	protected abstract EntityVO getNgsiEntity();
@@ -81,11 +83,11 @@ public abstract class AbstractDevice {
 		EntityVO entityVO = getNgsiEntity();
 		if (!isCreated) {
 			isCreated = true;
-			executeRequest(() -> entitiesApiClient.createEntity(entityVO, null), "Was not able to create entity. Might already exist.");
+			executeRequest(() -> entitiesApiClient.createEntity(entityVO, generalConfig.getTenant()), "Was not able to create entity. Might already exist.");
 			return;
 		}
 		executeRequest(
-				() -> entitiesApiClient.updateEntityAttrs(id, entityToEntityFragment(entityVO), null), "Was not able to update the entity.");
+				() -> entitiesApiClient.updateEntityAttrs(id, entityToEntityFragment(entityVO), generalConfig.getTenant()), "Was not able to update the entity.");
 	}
 
 	private void executeRequest(Runnable r, String msg) {

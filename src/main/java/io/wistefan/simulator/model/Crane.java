@@ -1,5 +1,6 @@
 package io.wistefan.simulator.model;
 
+import io.wistefan.simulator.config.GeneralConfig;
 import lombok.Setter;
 import lombok.ToString;
 import org.fiware.ngsi.api.EntitiesApiClient;
@@ -55,8 +56,8 @@ public class Crane extends AbstractDevice {
 	private ElectricMotor elMotor = new ElectricMotor(1500.0, 240.0, 52.0, 1.0);
 
 
-	public Crane(URI id, ScheduledExecutorService scheduledExecutorService, EntitiesApiClient entitiesApiClient, Clock clock, Optional<Double> optionalLat, Optional<Double> optionalLongi, double maxHookHeight, double maxLiftingWeight, double payloadAtTip, String model) {
-		super(id, scheduledExecutorService, entitiesApiClient, clock);
+	public Crane(URI id, ScheduledExecutorService scheduledExecutorService, EntitiesApiClient entitiesApiClient, Clock clock, GeneralConfig generalConfig, Optional<Double> optionalLat, Optional<Double> optionalLongi, double maxHookHeight, double maxLiftingWeight, double payloadAtTip, String model) {
+		super(id, scheduledExecutorService, entitiesApiClient, clock, generalConfig);
 		this.maxHookHeight = maxHookHeight;
 		this.maxLiftingWeight = maxLiftingWeight;
 		this.maxPayload = maxLiftingWeight;

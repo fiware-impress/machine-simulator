@@ -3,6 +3,7 @@ package io.wistefan.simulator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.context.annotation.Context;
+import io.wistefan.simulator.config.GeneralConfig;
 import io.wistefan.simulator.config.SimulatorConfiguration;
 import io.wistefan.simulator.model.Crane;
 import io.wistefan.simulator.model.LiftingCompany;
@@ -26,6 +27,7 @@ public class Simulator {
 	private final EntitiesApiClient entitiesApiClient;
 	private final Clock clock;
 	private final SimulatorConfiguration simulatorConfiguration;
+	private final GeneralConfig generalConfig;
 
 	private final ObjectMapper objectMapper;
 
@@ -43,16 +45,19 @@ public class Simulator {
 					companyID,
 					scheduledExecutorService,
 					entitiesApiClient,
-					clock, company.getName());
+					clock,
+					generalConfig,
+					company.getName());
 			company.cranes.stream().forEach(c -> {
 				Crane crane = new Crane(
 						URI.create(String.format(ID_TEMPLATE, "crane", c.getName())),
 						scheduledExecutorService,
 						entitiesApiClient,
 						clock,
+						generalConfig,
 						Optional.ofNullable(c.getLatitude()),
 						Optional.ofNullable(c.getLongitude()),
-						c.getMaxHookHeight(),c.getMaxLiftingWeight(), c.getPayloadAtTip(), c.getModel());
+						c.getMaxHookHeight(), c.getMaxLiftingWeight(), c.getPayloadAtTip(), c.getModel());
 				crane.setCurrentCustomer(companyID);
 				crane.startSimulation();
 			});
