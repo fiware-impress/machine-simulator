@@ -128,9 +128,7 @@ public class Crane extends AbstractDevice {
 		}
 		if (lifting != null) {
 			PropertyVO liftingWeightVO = asProperty(lifting.getWeight(), observedAt);
-			PropertyVO liftingVO = new PropertyVO().value("lifting").observedAt(observedAt).type(PropertyVO.Type.PROPERTY);
-			liftingVO.setAdditionalProperties(Map.of("weight", liftingWeightVO));
-			additionalProperties.put("lifting", liftingVO);
+			additionalProperties.put("currentWeight", liftingWeightVO);
 		}
 		//======== Electric Motor:
 		PropertyVO elMotorActiveVO = asProperty(elMotor.getActive(), observedAt);
@@ -167,7 +165,22 @@ public class Crane extends AbstractDevice {
 				)
 		);
 		additionalProperties.put("electricmotor", elMotorVO);
+
+		// compat with frontend
+		PropertyVO generalInformation = new PropertyVO()
+				.type(PropertyVO.Type.PROPERTY)
+				.value(Map.of("softwareVersion", asProperty(softwareVersion, observedAt),
+						"maxHookHeight", asProperty(maxHookHeight, observedAt),
+						"maxLiftingWeight", asProperty(maxLiftingWeight, observedAt),
+						"maxPayLoad", asProperty(maxPayload, observedAt),
+						"model", asProperty(model, observedAt),
+						"currentHookHeight", asProperty(currentHookHeight, observedAt),
+						"currentWeight", lifting != null ? asProperty(lifting.getWeight(), observedAt) : asProperty(0, observedAt)));
+
+		additionalProperties.put("inUse", asProperty(lifting != null, observedAt);
+		additionalProperties.put("generalInformation", generalInformation);
 		ngsiEntity.setAdditionalProperties(additionalProperties);
+
 		return ngsiEntity;
 	}
 
