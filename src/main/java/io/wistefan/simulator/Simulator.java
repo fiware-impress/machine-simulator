@@ -57,7 +57,7 @@ public class Simulator {
 						generalConfig,
 						Optional.ofNullable(c.getLatitude()),
 						Optional.ofNullable(c.getLongitude()),
-						c.getMaxHookHeight(), c.getMaxLiftingWeight(), c.getPayloadAtTip(), c.getModel());
+						c.getMaxHookHeight(), c.getMaxLiftingWeight(), c.getCurrentCost(), c.getPayloadAtTip(), c.getModel());
 				crane.setCurrentCustomer(companyID);
 				crane.startSimulation();
 			});

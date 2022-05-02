@@ -44,6 +44,7 @@ public class Crane extends AbstractDevice {
 
 	private final double maxHookHeight;
 	private final double maxLiftingWeight;
+	private final double currentCost;
 	// compatibility
 	private final double maxPayload;
 	private final double payloadAtTip;
@@ -58,11 +59,12 @@ public class Crane extends AbstractDevice {
 	private ElectricMotor elMotor = new ElectricMotor(1500.0, 240.0, 52.0, 1.0);
 
 
-	public Crane(URI id, ScheduledExecutorService scheduledExecutorService, EntitiesApiClient entitiesApiClient, Clock clock, GeneralConfig generalConfig, Optional<Double> optionalLat, Optional<Double> optionalLongi, double maxHookHeight, double maxLiftingWeight, double payloadAtTip, String model) {
+	public Crane(URI id, ScheduledExecutorService scheduledExecutorService, EntitiesApiClient entitiesApiClient, Clock clock, GeneralConfig generalConfig, Optional<Double> optionalLat, Optional<Double> optionalLongi, double maxHookHeight, double maxLiftingWeight, double currentCost, double payloadAtTip, String model) {
 		super(id, scheduledExecutorService, entitiesApiClient, clock, generalConfig);
 		this.maxHookHeight = maxHookHeight;
 		this.maxLiftingWeight = maxLiftingWeight;
 		this.maxPayload = maxLiftingWeight;
+		this.currentCost = currentCost;
 		this.payloadAtTip = payloadAtTip;
 		this.model = model;
 		optionalLat.ifPresent(olv -> lat = olv);
@@ -123,7 +125,7 @@ public class Crane extends AbstractDevice {
 		additionalProperties.put("maxPayLoad", asProperty(maxPayload, observedAt));
 		additionalProperties.put("currentHookHeight", asProperty(currentHookHeight, observedAt));
 		additionalProperties.put("model", asProperty(model, observedAt));
-
+		additionalProperties.put("currentCost", asProperty(currentCost, observedAt));
 
 		if (currentCustomer != null) {
 			RelationshipVO companyRelationshipVO = new RelationshipVO().observedAt(observedAt).type(RelationshipVO.Type.RELATIONSHIP)._object(currentCustomer);
@@ -132,7 +134,11 @@ public class Crane extends AbstractDevice {
 		if (lifting != null) {
 			PropertyVO liftingWeightVO = asProperty(lifting.getWeight(), observedAt);
 			additionalProperties.put("currentWeight", liftingWeightVO);
+			additionalProperties.put("currentConsumption", asProperty(lifting.getWeight() * 0.1, observedAt));
+		} else {
+			additionalProperties.put("currentConsumption", asProperty(0, observedAt));
 		}
+
 		//======== Electric Motor:
 		PropertyVO elMotorActiveVO = asProperty(elMotor.getActive(), observedAt);
 		PropertyVO elMotorRpmVO = asProperty(elMotor.getRpm(), observedAt);

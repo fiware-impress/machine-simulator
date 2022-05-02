@@ -15,4 +15,5 @@ public class CraneConfig {
 	private Double maxLiftingWeight = 8000.0;
 	private Double payloadAtTip = 1650.0;
 	private HealthStatus healthStatus = HealthStatus.HEALTHY;
+	private Double currentCost= 40.20;
 }

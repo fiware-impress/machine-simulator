@@ -40,6 +40,7 @@ simulator:
           model: "Euro SSG 130"
           latitude: 5
           longitude: 5
+          currentCost: 38.1
         - name: crane-paderborn-2
           model: "Euro SSG 130"
           latitude: 5
@@ -51,11 +52,13 @@ simulator:
           model: "Euro SSG 144"
           latitude: 3
           longitude: 3
+          currentCost: 45.02
         - name: crane-dresden-2
           model: "Euro SSG 130"
           latitude: 3
           longitude: 3
           healtStatus: UNHEALTHY
+          currentCost: 45.02
     - name: berlin-company
       cranes:
         - name: crane-berlin-1
