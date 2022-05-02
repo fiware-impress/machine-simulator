@@ -1,5 +1,6 @@
 package io.wistefan.simulator.config;
 
+import io.wistefan.simulator.model.HealthStatus;
 import lombok.Data;
 
 @Data
@@ -13,4 +14,5 @@ public class CraneConfig {
 	private Double maxHookHeight = 130.0;
 	private Double maxLiftingWeight = 8000.0;
 	private Double payloadAtTip = 1650.0;
+	private HealthStatus healthStatus = HealthStatus.HEALTHY;
 }

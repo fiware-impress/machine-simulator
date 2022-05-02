@@ -40,6 +40,8 @@ public class Crane extends AbstractDevice {
 	private double currentHookHeight = 0.0;
 	private boolean malfunction = false;
 
+	private HealthStatus healthStatus = HealthStatus.HEALTHY;
+
 	private final double maxHookHeight;
 	private final double maxLiftingWeight;
 	// compatibility
@@ -113,6 +115,7 @@ public class Crane extends AbstractDevice {
 		EntityVO ngsiEntity = new EntityVO().atContext(CONTEXT_URL).id(getId()).location(location).type("crane").observationSpace(null).operationSpace(null);
 		Map<String, Object> additionalProperties = new HashMap<>();
 
+		additionalProperties.put("healthState", asProperty(healthStatus, observedAt));
 		additionalProperties.put("softwareVersion", asProperty(softwareVersion, observedAt));
 		additionalProperties.put("active", asProperty(active, observedAt));
 		additionalProperties.put("maxHookHeight", asProperty(maxHookHeight, observedAt));
@@ -177,7 +180,7 @@ public class Crane extends AbstractDevice {
 						"currentHookHeight", asProperty(currentHookHeight, observedAt),
 						"currentWeight", lifting != null ? asProperty(lifting.getWeight(), observedAt) : asProperty(0, observedAt)));
 
-		additionalProperties.put("inUse", asProperty(lifting != null, observedAt);
+		additionalProperties.put("inUse", asProperty(lifting != null, observedAt));
 		additionalProperties.put("generalInformation", generalInformation);
 		ngsiEntity.setAdditionalProperties(additionalProperties);
 

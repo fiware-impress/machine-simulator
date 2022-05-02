@@ -33,25 +33,32 @@ endpoints:
 
 simulator:
   companies:
-    - name: company-1
+    # PADERBORN
+    - name: paderborn-company
       cranes:
-        - name: crane-c1-1
+        - name: crane-paderborn-1
           model: "Euro SSG 130"
-        - name: crane-c2-1
+          latitude: 5
+          longitude: 5
+        - name: crane-paderborn-2
           model: "Euro SSG 130"
-          latitude: 51.14
-          longitude: 13.7
-#        - name: crane-c1-2
-#        - name: crane-c1-3
-#        - name: crane-c1-4
-#        - name: crane-c1-5
-#    - name: company-2
-#      cranes:
-#        - name: crane-c2-1
-#        - name: crane-c2-2
-#        - name: crane-c2-3
-#    - name: company-3
-#      cranes:
-#        - name: crane-c3-1
-#        - name: crane-c3-2
-#        - name: crane-c3-3
+          latitude: 5
+          longitude: 5
+    # DRESDEN
+    - name: dresden-company
+      cranes:
+        - name: crane-dresden-1
+          model: "Euro SSG 144"
+          latitude: 3
+          longitude: 3
+        - name: crane-dresden-2
+          model: "Euro SSG 130"
+          latitude: 3
+          longitude: 3
+          healtStatus: UNHEALTHY
+    - name: berlin-company
+      cranes:
+        - name: crane-berlin-1
+          model: "Euro SSG 130"
+          latitude: 1
+          longitude: 1
