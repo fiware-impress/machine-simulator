@@ -57,9 +57,9 @@ public class Crane extends AbstractDevice {
 	private URI currentCustomer;
 	private Lifting lifting;
 	private ElectricMotor elMotor = new ElectricMotor(1500.0, 240.0, 52.0, 1.0);
+	private String company;
 
-
-	public Crane(URI id, ScheduledExecutorService scheduledExecutorService, EntitiesApiClient entitiesApiClient, Clock clock, GeneralConfig generalConfig, Optional<Double> optionalLat, Optional<Double> optionalLongi, double maxHookHeight, double maxLiftingWeight, double currentCost, double payloadAtTip, String model) {
+	public Crane(URI id, ScheduledExecutorService scheduledExecutorService, EntitiesApiClient entitiesApiClient, Clock clock, GeneralConfig generalConfig, Optional<Double> optionalLat, Optional<Double> optionalLongi, double maxHookHeight, double maxLiftingWeight, double currentCost, double payloadAtTip, String model, String company) {
 		super(id, scheduledExecutorService, entitiesApiClient, clock, generalConfig);
 		this.maxHookHeight = maxHookHeight;
 		this.maxLiftingWeight = maxLiftingWeight;
@@ -67,6 +67,7 @@ public class Crane extends AbstractDevice {
 		this.currentCost = currentCost;
 		this.payloadAtTip = payloadAtTip;
 		this.model = model;
+		this.company = company;
 		optionalLat.ifPresent(olv -> lat = olv);
 		optionalLongi.ifPresent(olv -> longi = olv);
 	}
@@ -128,8 +129,7 @@ public class Crane extends AbstractDevice {
 		additionalProperties.put("currentCost", asProperty(currentCost, observedAt));
 
 		if (currentCustomer != null) {
-			RelationshipVO companyRelationshipVO = new RelationshipVO().observedAt(observedAt).type(RelationshipVO.Type.RELATIONSHIP)._object(currentCustomer);
-			additionalProperties.put("currentCustomer", companyRelationshipVO);
+			additionalProperties.put("currentCustomer", asProperty(company, observedAt));
 		}
 		if (lifting != null) {
 			PropertyVO liftingWeightVO = asProperty(lifting.getWeight(), observedAt);

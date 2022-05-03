@@ -34,7 +34,7 @@ endpoints:
 simulator:
   companies:
     # PADERBORN
-    - name: paderborn-company
+    - name: PaderConstructions
       cranes:
         - name: crane-paderborn-1
           model: "Euro SSG 130"
@@ -46,7 +46,7 @@ simulator:
           latitude: 5
           longitude: 5
     # DRESDEN
-    - name: dresden-company
+    - name: SaxonyBuilding
       cranes:
         - name: crane-dresden-1
           model: "Euro SSG 144"
@@ -59,7 +59,7 @@ simulator:
           longitude: 3
           healtStatus: UNHEALTHY
           currentCost: 45.02
-    - name: berlin-company
+    - name: HT-Berlin
       cranes:
         - name: crane-berlin-1
           model: "Euro SSG 130"
